@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FashionHub | Premium Full-Stack Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.85);
+            --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--light); color: var(--dark); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* --- SIDEBAR & NAVIGATION --- */
+        .sidebar {
+            position: fixed; left: -320px; top: 0; width: 300px; height: 100%;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+            z-index: 3000; transition: var(--transition); padding: 40px 30px;
+            box-shadow: 20px 0 50px rgba(0,0,0,0.1); border-right: 1px solid rgba(0,0,0,0.05);
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5);
+            display: none; z-index: 2500; backdrop-filter: blur(4px);
+        }
+        .sidebar-overlay.active { display: block; }
+
+        .sidebar-profile {
+            margin: 30px 0; padding: 20px; background: var(--light);
+            border-radius: 20px; display: flex; align-items: center; gap: 15px;
+        }
+        .profile-pic {
+            width: 50px; height: 50px; border-radius: 50%; background: var(--primary);
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;
+        }
+
+        .side-menu { list-style: none; }
+        .side-menu li { margin-bottom: 10px; }
+        .side-menu a {
+            font-size: 1.1rem; font-weight: 600; text-decoration: none; color: var(--dark);
+            display: flex; align-items: center; gap: 15px; padding: 12px 15px;
+            border-radius: 12px; transition: 0.3s; cursor: pointer;
+        }
+        .side-menu a:hover { background: var(--light); color: var(--primary); transform: translateX(5px); }
+
+        .burger-menu { display: flex; flex-direction: column; gap: 5px; cursor: pointer; margin-right: 20px; padding: 10px; }
+        .burger-menu span { width: 24px; height: 2px; background: var(--dark); border-radius: 10px; }
+
+        /* --- AUTH OVERLAYS --- */
+        .overlay {
+            position: fixed; inset: 0; background: #000;
+            display: flex; align-items: center; justify-content: center; z-index: 9999; overflow: hidden;
+        }
+        .auth-bg-image {
+            position: absolute; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600') center/cover;
+            filter: brightness(0.4); animation: subtleZoom 20s infinite alternate;
+        }
+        @keyframes subtleZoom { from { transform: scale(1); } to { transform: scale(1.15); } }
+
+        .modal-box {
+            position: relative; background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px); padding: 40px; border-radius: 30px; width: 95%; max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align: center;
+        }
+        
+        input, select, textarea {
+            width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #e2e8f0;
+            border-radius: 12px; outline: none; transition: var(--transition); font-size: 14px;
+        }
+        
+        .btn-prime {
+            width: 100%; padding: 14px; background: var(--primary); color: white;
+            border: none; border-radius: 12px; cursor: pointer; font-weight: 600; margin-top: 10px;
+            transition: var(--transition);
+        }
+        .btn-prime:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        /* --- HEADER --- */
+        .main-header {
+            background: var(--glass); backdrop-filter: blur(12px);
+            padding: 15px 5%; display: flex; justify-content: space-between;
+            align-items: center; position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; cursor: pointer; letter-spacing: -1px; }
+        .logo span { color: var(--primary); }
+        
+        .menu { display: flex; gap: 25px; }
+        .menu a { text-decoration: none; color: var(--dark); font-weight: 600; cursor: pointer; opacity: 0.6; transition: 0.3s; font-size: 0.95rem; }
+        .menu a.active { opacity: 1; color: var(--primary); }
+
+        .nav-icons { display: flex; align-items: center; gap: 20px; }
+        .icon-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--dark); position: relative; }
+
+        /* --- PRODUCT GRID --- */
+        .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding: 40px 5%; flex: 1; }
+        .card { background: white; border-radius: 24px; overflow: hidden; transition: var(--transition); border: 1px solid #f1f5f9; position: relative; }
+        .card:hover { transform: translateY(-12px); box-shadow: 0 30px 60px -12px rgba(0,0,0,0.12); }
+        .card img { width: 100%; height: 350px; object-fit: cover; }
+        .card-content { padding: 25px; }
+        .price { font-weight: 800; color: var(--primary); font-size: 1.3rem; }
+
+        /* --- FOOTER & LEGAL --- */
+        .legal-section { background: #0f172a; color: rgba(255,255,255,0.7); padding: 60px 5% 40px; }
+        .legal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }
+        .legal-title { color: white; margin-bottom: 20px; font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .legal-list { list-style: none; font-size: 0.85rem; line-height: 2; }
+
+        /* --- CART PANEL --- */
+        .cart-panel {
+            position: fixed; right: 0; top: 0; width: 400px; height: 100%;
+            background: white; z-index: 4000; padding: 30px;
+            transform: translateX(100%); transition: var(--transition);
+            box-shadow: -20px 0 60px rgba(0,0,0,0.15); display: flex; flex-direction: column;
+        }
+        .cart-open { transform: translateX(0); }
+        .cart-item { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; }
+        .cart-item img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; }
+
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; background: var(--dark);
+            color: white; padding: 16px 32px; border-radius: 16px; display: none; z-index: 10000;
+        }
+
+        /* --- HERO SLIDER --- */
+        .hero-slider { position: relative; height: 450px; overflow: hidden; background: #000; }
+        .slide-container { display: flex; height: 100%; transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); }
+        .slide { min-width: 100%; position: relative; background-size: cover; background-position: center; }
+        .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(15, 23, 42, 0.8), transparent); padding: 0 10%; color: white; display: flex; flex-direction: column; justify-content: center; }
+        .slide-overlay h1 { font-size: 3.5rem; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR NAVIGATION -->
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+<div id="sideBar" class="sidebar">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+        <div class="logo">FASHION<span>HUB</span></div>
+        <i class="fa-solid fa-xmark" onclick="toggleSidebar(false)" style="cursor:pointer; font-size:1.5rem; opacity:0.5"></i>
+    </div>
+
+    <div class="sidebar-profile">
+        <div class="profile-pic"><i class="fa-solid fa-user"></i></div>
+        <div>
+            <div style="font-weight: 800; font-size: 0.9rem;" id="sideBarUserName">Hello, Guest</div>
+            <div style="font-size: 0.75rem; opacity: 0.6;">Member Since 2026</div>
+        </div>
+    </div>
+
+    <ul class="side-menu">
+        <li><a onclick="showPage('home'); toggleSidebar(false)"><i class="fa-solid fa-house"></i> Home Overview</a></li>
+        <li><a onclick="showPage('men'); toggleSidebar(false)"><i class="fa-solid fa-mars"></i> Men's Wear</a></li>
+        <li><a onclick="showPage('women'); toggleSidebar(false)"><i class="fa-solid fa-venus"></i> Women's Wear</a></li>
+        
+        <hr style="margin: 15px 0; opacity: 0.1;">
+        
+        <!-- Added Terms & Contact to Sidebar -->
+        <li><a onclick="toggleModal('contactModal', true); toggleSidebar(false)"><i class="fa-solid fa-headset"></i> Contact Support</a></li>
+        <li><a onclick="scrollToFooter(); toggleSidebar(false)"><i class="fa-solid fa-file-contract"></i> Terms & Policies</a></li>
+        
+        <hr style="margin: 15px 0; opacity: 0.1;">
+        <li><a onclick="toggleModal('addModal', true); toggleSidebar(false)"><i class="fa-solid fa-circle-plus"></i> Admin: Add Product</a></li>
+        <li><a onclick="location.reload()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a></li>
+    </ul>
+</div>
+
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay" class="overlay">
+    <div class="auth-bg-image"></div>
+    <div class="modal-box">
+        <div class="logo" style="font-size: 2rem; margin-bottom: 10px;">FASHION<span>HUB</span></div>
+        <h2 style="margin-bottom: 20px; color: #1e293b;">Welcome Back</h2>
+        <input type="text" id="loginUser" placeholder="Username">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button class="btn-prime" onclick="handleLogin()">Sign In</button>
+        <p style="margin-top:20px; font-size: 0.9rem; color: #64748b;">New here? <span onclick="showAuth('reg')" style="color:var(--primary); cursor:pointer; font-weight:700">Create Account</span></p>
+    </div>
+</div>
+
+<!-- REGISTER OVERLAY -->
+<div id="registerOverlay" class="overlay" style="display:none">
+    <div class="auth-bg-image" style="background-image: url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600');"></div>
+    <div class="modal-box">
+        <h2 style="margin-bottom: 10px; color: #1e293b;">Join FashionHub</h2>
+        <input type="text" id="regName" placeholder="Full Name">
+        <input type="password" id="regPass" placeholder="Create Password">
+        <button class="btn-prime" onclick="handleRegister()">Register Now</button>
+        <p style="margin-top:20px; font-size: 0.9rem; color: #64748b; cursor:pointer" onclick="showAuth('login')">← Back to Login</p>
+    </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div id="contactModal" class="overlay" style="display:none; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);">
+    <div class="modal-box">
+        <h2 style="margin-bottom: 10px; color: #1e293b;">Get In Touch</h2>
+        <p style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.7;">Have a question about an order or style?</p>
+        <input type="text" placeholder="Subject">
+        <textarea placeholder="How can we help?" style="height: 100px;"></textarea>
+        <button class="btn-prime" onclick="toggleModal('contactModal', false); showToast('Message Sent Successfully!')">Send Message</button>
+        <button onclick="toggleModal('contactModal', false)" style="background:none; border:none; margin-top:15px; cursor:pointer; opacity: 0.5;">Close</button>
+    </div>
+</div>
+
+<!-- ADD PRODUCT MODAL -->
+<div id="addModal" class="overlay" style="display:none; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(5px);">
+    <div class="modal-box">
+        <h3>Add New Product</h3>
+        <select id="newCat">
+            <option value="home">Home Page</option>
+            <option value="men">Men's Collection</option>
+            <option value="women">Women's Collection</option>
+            <option value="kids">Kids' Collection</option>
+        </select>
+        <input type="text" id="newName" placeholder="Item Name">
+        <input type="number" id="newPrice" placeholder="Price (₹)">
+        <input type="text" id="newImg" placeholder="Image URL">
+        <button class="btn-prime" onclick="addNewProduct()">Add to Store</button>
+        <button onclick="toggleModal('addModal', false)" style="background:none; border:none; margin-top:15px; cursor:pointer; opacity: 0.5;">Cancel</button>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="mainContent" style="display:none">
+    <header class="main-header">
+        <div style="display:flex; align-items:center">
+            <div class="burger-menu" onclick="toggleSidebar(true)">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="logo" onclick="showPage('home')">FASHION<span>HUB</span></div>
+        </div>
+        <nav class="menu">
+            <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
+            <a onclick="showPage('men')" id="nav-men">Men</a>
+            <a onclick="showPage('women')" id="nav-women">Women</a>
+            <a onclick="showPage('kids')" id="nav-kids">Kids</a>
+        </nav>
+        <div class="nav-icons">
+            <button class="icon-btn" onclick="toggleModal('addModal', true)"><i class="fa-solid fa-plus-circle"></i></button>
+            <button class="icon-btn" onclick="toggleCart(true)">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cartCount" style="position:absolute; top:-5px; right:-8px; background:var(--primary); color:white; font-size:10px; padding:2px 6px; border-radius:10px">0</span>
+            </button>
+        </div>
+    </header>
+
+    <section class="hero-slider" id="heroSec">
+        <div class="slide-container" id="slideContainer">
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600')">
+                <div class="slide-overlay">
+                    <h1>Luxe Collections</h1>
+                    <p>Experience the pinnacle of high-street fashion.</p>
+                    <button class="btn-prime" style="width:180px" onclick="showPage('men')">Shop Men</button>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600')">
+                <div class="slide-overlay">
+                    <h1>Spring Arrival</h1>
+                    <p>New arrivals that define the season's aesthetic.</p>
+                    <button class="btn-prime" style="width:180px" onclick="showPage('women')">Explore Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEARCH BAR -->
+    <div style="padding: 20px 5%; display: flex; justify-content: center; background: white;">
+        <div style="position: relative; width: 100%; max-width: 600px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+            <input type="text" style="width: 100%; padding: 16px 16px 16px 50px; border-radius: 100px; border: 1px solid #e2e8f0; background: #f8fafc; margin:0" placeholder="Search styles..." id="productSearch" onkeyup="filterProducts()">
+        </div>
+    </div>
+
+    <div id="pagesContainer" class="products"></div>
+
+    <!-- NEW ENHANCED FOOTER LEGAL & CONTACT -->
+    <section class="legal-section" id="footerLegal">
+        <div class="legal-grid">
+            <!-- Column 1: Contact -->
+            <div>
+                <h4 class="legal-title">Contact Support</h4>
+                <ul class="legal-list">
+                    <li><i class="fa-solid fa-phone" style="margin-right:10px; color:var(--primary)"></i> +91 22 4567 8900</li>
+                    <li><i class="fa-solid fa-envelope" style="margin-right:10px; color:var(--primary)"></i> support@fashionhub.com</li>
+                    <li><i class="fa-solid fa-location-dot" style="margin-right:10px; color:var(--primary)"></i> Mumbai Boutique, Fashion St.</li>
+                </ul>
+            </div>
+            <!-- Column 2: Terms -->
+            <div>
+                <h4 class="legal-title">Terms & Conditions</h4>
+                <ul class="legal-list">
+                    <li>• 30-Day Return Policy</li>
+                    <li>• Free Shipping on ₹5000+</li>
+                    <li>• Secure Payment Processing</li>
+                    <li>• Authentication Guarantee</li>
+                </ul>
+            </div>
+            <!-- Column 3: Policy -->
+            <div>
+                <h4 class="legal-title">Privacy Policy</h4>
+                <ul class="legal-list">
+                    <li>• GDPR Data Protection</li>
+                    <li>• No Third-Party Sharing</li>
+                    <li>• SSL Encrypted Checkout</li>
+                    <li>• Cookies & Preferences</li>
+                </ul>
+            </div>
+            <!-- Column 4: Newsletter -->
+            <div>
+                <h4 class="legal-title">Join the Hub</h4>
+                <p style="font-size: 0.8rem; margin-bottom: 10px;">Get 10% off your first order.</p>
+                <div style="display:flex; gap:5px">
+                    <input type="text" placeholder="Email" style="margin:0; background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.1)">
+                    <button class="btn-prime" style="margin:0; width:auto; padding:0 15px" onclick="showToast('Subscribed!')">Join</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ORIGINAL STORE LOCATOR & COPYRIGHT -->
+    <footer style="background: #0f172a; padding: 0 5% 40px;">
+        <div class="store-locator" style="border: 1px solid rgba(255,255,255,0.1);">
+            <div class="store-info" style="padding:40px; color:white">
+                <h3>Mumbai Boutique</h3>
+                <p>Fashion Street, Marine Lines, Mumbai</p>
+                <p style="font-size:0.8rem; opacity:0.6; margin-top:10px">Open Mon-Sat: 10:00 AM - 09:00 PM</p>
+            </div>
+            <div class="map-frame">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3773.916853509153!2d72.82772591141367!3d18.935140882161685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7d1e15e01f609%3A0xc68222b3b0d2d64!2sFashion%20St%2C%20Marine%20Lines%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1714562410000!5m2!1sen!2sin" style="width: 100%; height: 100%; border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+        <div style="text-align:center; color:white; opacity:0.3; margin-top:40px; font-size:0.8rem">
+            &copy; 2026 FashionHub Global. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- CART PANEL -->
+    <div id="cartPanel" class="cart-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center">
+            <h2 style="font-weight: 800;">Your Bag</h2>
+            <i class="fa-solid fa-xmark" onclick="toggleCart(false)" style="cursor:pointer; font-size:1.5rem"></i>
+        </div>
+        <div id="cartItemsList" style="flex:1; overflow-y:auto; margin:20px 0;"></div>
+        <div style="border-top: 2px solid #f1f5f9; padding-top: 20px;">
+            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.4rem; margin-bottom: 20px;">
+                <span>Total</span>
+                <span>₹<span id="cartTotal">0</span></span>
+            </div>
+            <button class="btn-prime" style="background:var(--dark)">Checkout Now</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+</div>
+
+<script>
+    let storeDB = JSON.parse(localStorage.getItem('fashion_db')) || {
+        home: [
+            { id: 101, name: "Premium Sneakers", price: 5999, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" },
+            { id: 102, name: "Aviator Shades", price: 2499, img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500" },
+            { id: 103, name: "Classic Watch", price: 12500, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" }
+        ],
+        men: [{ id: 201, name: "Tailored Blazer", price: 8500, img: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500" }],
+        women: [{ id: 301, name: "Silk Wrap Dress", price: 4200, img: "https://images.unsplash.com/photo-1539109132381-3151b8a77f06?w=500" }],
+        kids: [{ id: 401, name: "Denim Dungarees", price: 1800, img: "https://images.unsplash.com/photo-1519457431-758c4a5d7b5b?w=500" }]
+    };
+
+    let cart = [];
+    let currentPage = 'home';
+
+    function toggleSidebar(show) {
+        document.getElementById("sideBar").classList.toggle('active', show);
+        document.getElementById("sidebarOverlay").classList.toggle('active', show);
+    }
+
+    function scrollToFooter() {
+        document.getElementById('footerLegal').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    let currentSlide = 0;
+    setInterval(() => {
+        const slider = document.getElementById('slideContainer');
+        if(slider) {
+            currentSlide = (currentSlide + 1) % 2;
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+    }, 5000);
+
+    function showAuth(type) {
+        document.getElementById('loginOverlay').style.display = (type === 'login') ? 'flex' : 'none';
+        document.getElementById('registerOverlay').style.display = (type === 'reg') ? 'flex' : 'none';
+    }
+
+    function handleLogin() {
+        const user = document.getElementById('loginUser').value || "Fashion Lover";
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        document.getElementById('sideBarUserName').innerText = "Hello, " + user;
+        showPage('home');
+    }
+
+    function showPage(pageId) {
+        currentPage = pageId;
+        const container = document.getElementById("pagesContainer");
+        container.innerHTML = "";
+        document.getElementById('heroSec').style.display = (pageId === 'home') ? 'block' : 'none';
+        
+        document.querySelectorAll(".menu a").forEach(a => a.classList.remove('active'));
+        const navItem = document.getElementById("nav-" + pageId);
+        if(navItem) navItem.classList.add('active');
+
+        storeDB[pageId].forEach((product) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${product.img}">
+                <div class="card-content">
+                    <h3>${product.name}</h3>
+                    <div class="price">₹${product.price.toLocaleString()}</div>
+                    <div style="display:flex; gap:10px; margin-top:15px">
+                        <button class="btn-prime" style="margin:0" onclick="addToCart(${product.id}, '${pageId}')">Add to Bag</button>
+                        <button style="padding:12px; border-radius:12px; border:1px solid #fee2e2; color:#ef4444; background:white; cursor:pointer" onclick="deleteFromStore('${pageId}', ${product.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>`;
+            container.appendChild(card);
+        });
+    }
+
+    function addToCart(id, cat) {
+        const item = storeDB[cat].find(p => p.id === id);
+        cart.push({ ...item, cartUid: Date.now() });
+        updateCartUI();
+        showToast("Added to Bag");
+    }
+
+    function updateCartUI() {
+        const list = document.getElementById("cartItemsList");
+        list.innerHTML = "";
+        let total = 0;
+        cart.forEach(item => {
+            total += item.price;
+            list.innerHTML += `
+                <div class="cart-item">
+                    <img src="${item.img}">
+                    <div>
+                        <div style="font-weight:700">${item.name}</div>
+                        <div style="color:var(--primary); font-weight:800">₹${item.price.toLocaleString()}</div>
+                        <span style="color:red; cursor:pointer; font-size:0.7rem" onclick="removeFromCart(${item.cartUid})">Remove</span>
+                    </div>
+                </div>`;
+        });
+        document.getElementById("cartCount").innerText = cart.length;
+        document.getElementById("cartTotal").innerText = total.toLocaleString();
+    }
+
+    function removeFromCart(uid) {
+        cart = cart.filter(item => item.cartUid !== uid);
+        updateCartUI();
+    }
+
+    function filterProducts() {
+        const q = document.getElementById("productSearch").value.toLowerCase();
+        document.querySelectorAll(".card").forEach(card => {
+            const name = card.querySelector("h3").innerText.toLowerCase();
+            card.style.display = name.includes(q) ? "block" : "none";
+        });
+    }
+
+    function toggleCart(show) { document.getElementById("cartPanel").classList.toggle('cart-open', show); }
+    function toggleModal(id, show) { document.getElementById(id).style.display = show ? 'flex' : 'none'; }
+    
+    function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.innerText = msg; t.style.display = "block";
+        setTimeout(() => t.style.display = "none", 3000);
+    }
+
+    function addNewProduct() {
+        const cat = document.getElementById("newCat").value;
+        const name = document.getElementById("newName").value;
+        const price = parseInt(document.getElementById("newPrice").value);
+        const img = document.getElementById("newImg").value || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500";
+        if(!name || !price) return alert("Enter details");
+        storeDB[cat].push({ id: Date.now(), name, price, img });
+        localStorage.setItem('fashion_db', JSON.stringify(storeDB));
+        showPage(currentPage);
+        toggleModal('addModal', false);
+    }
+
+    function deleteFromStore(cat, id) {
+        if(confirm("Remove item?")) {
+            storeDB[cat] = storeDB[cat].filter(p => p.id !== id);
+            localStorage.setItem('fashion_db', JSON.stringify(storeDB));
+            showPage(currentPage);
+        }
+    }
+</script>
+</body>
+</html> 
