@@ -1,345 +1,422 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fashion Store</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FashionHub | Premium Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Added Animate.css for entrance animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-<style>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins; scroll-behavior: smooth;}
+        body{background:#f6f7fb; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;}
 
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #f4f4f4;
-}
+        /* --- LOGIN PAGE STYLES --- */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 3000; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3); width: 100%; max-width: 400px;
+            text-align: center; backdrop-filter: blur(10px);
+        }
+        .login-box h2 { margin-bottom: 20px; color: #333; }
+        .login-box input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            border: 1px solid #ddd; border-radius: 10px; outline: none;
+        }
+        .login-btn {
+            width: 100%; padding: 12px; background: #0072ff; color: #fff;
+            border: none; border-radius: 25px; cursor: pointer; font-weight: 600;
+            margin-top: 15px; transition: 0.3s;
+        }
+        .login-btn:hover { background: #0056b3; transform: scale(1.02); }
 
-/* HEADER */
-header {
-  background: #222;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
+        /* Hide main content initially */
+        #mainContent { display: none; }
 
-.logo img { width: 80px; }
+        /* HEADER */
+        .main-header{background:rgba(255, 255, 255, 0.9); padding:15px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 5px 20px rgba(0,0,0,.05); backdrop-filter: blur(10px);}
+        .menu{display:flex;gap:30px;font-weight:600}
+        .menu a{cursor:pointer; text-decoration: none; color: #333; transition: 0.3s; position: relative;}
+        .menu a:hover{color: #0072ff;}
+        .header-btn{background:#000;color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer; transition: 0.3s;}
+        .header-btn:hover{background: #0072ff; transform: scale(1.05);}
 
-.nav-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
+        /* --- VIDEO HERO SECTION --- */
+        .hero{height:75vh; position:relative; overflow:hidden; background: #000;}
+        .video-bg {
+            position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%;
+            width: auto; height: auto; z-index: 1; transform: translate(-50%, -50%);
+            object-fit: cover; opacity: 0.6;
+        }
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.7), transparent); z-index: 2;
+        }
+        .hero-content {
+            position: absolute; top: 50%; left: 60px; transform: translateY(-50%);
+            color: #fff; z-index: 3;
+        }
+        .hero h1 { font-size: 70px; font-weight: 700; line-height: 1; margin-bottom: 15px; text-transform: uppercase; letter-spacing: -2px;}
+        .hero p { font-size: 22px; opacity: 0.9; margin-bottom: 25px; }
 
-.nav-buttons button {
-  background: none;
-  border: none;
-  color: white;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-}
+        /* PRODUCTS */
+        .page{display:none; padding-bottom: 50px; flex: 1;}
+        .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;padding:20px 40px}
+        
+        .card{
+            background:#fff; border-radius: 20px; overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0,0,0,.05); position: relative; 
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .card:hover{transform: translateY(-15px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.1);}
+        .card img{width:100%;height:350px;object-fit:cover; transition: 0.8s;}
+        .card:hover img { transform: scale(1.1); }
+        
+        .card-content{padding:20px}
+        .price{color:#0072ff;font-weight:700;font-size: 1.2rem; margin:10px 0}
+        .delete-cross{position:absolute;top:15px;right:15px;border:none;background:rgba(255,255,255,0.9);border-radius:50%;width:35px;height:35px;color:red;font-weight:bold;cursor:pointer; z-index: 5; transition: 0.3s;}
+        .delete-cross:hover { background: red; color: white; }
+        .add-cart{width:100%;background:#000;color:#fff;border:none;padding:12px;border-radius:25px;cursor:pointer; font-weight: 600; transition: 0.3s; position: relative; overflow: hidden;}
+        .add-cart:hover { background: #0072ff; box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4); }
 
-.nav-buttons button:hover {
-  color: #00bfff;
-}
+        /* MAP SECTION SCROLL ANIMATION */
+        .reveal { opacity: 0; transform: translateY(50px); transition: 1s all ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-/* SEARCH */
-.search-box input { padding: 6px; }
+        .map-section { padding: 60px 40px; background: #fff; text-align: center; }
+        .map-container { 
+            width: 100%; max-width: 1100px; height: 400px; margin: 30px auto; 
+            border-radius: 30px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
 
-.search-box button {
-  padding: 6px 10px;
-  background: #00bfff;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
+        /* NEWSLETTER */
+        .newsletter{background: #000; color: white; padding: 80px 20px; text-align: center; margin: 40px; border-radius: 40px;}
+        .newsletter h2{font-size: 36px; margin-bottom: 10px;}
+        .newsletter input{padding: 15px 25px; width: 350px; border-radius: 30px; border: none; outline: none; margin-right: -50px; font-size: 16px;}
+        .newsletter button{padding: 15px 40px; border-radius: 30px; border: none; background: #0072ff; color: #fff; cursor: pointer; font-weight: 700; transition: 0.3s;}
+        .newsletter button:hover { background: #00c6ff; transform: scale(1.05); }
 
-/* CART */
-.cart-btn {
-  background: #ff9800;
-  border: none;
-  padding: 8px 12px;
-  color: white;
-  cursor: pointer;
-}
+        /* CART PANEL */
+        .cart-panel{position:fixed;right:0;top:0;width:380px;height:100%;background:rgba(255,255,255,0.95); backdrop-filter: blur(15px); box-shadow:-10px 0 30px rgba(0,0,0,.1);padding:40px;transform:translateX(100%);transition:.6s cubic-bezier(0.7, 0, 0.3, 1); z-index: 1000;}
+        .cart-open{transform:translateX(0)}
+        #cartItems{margin: 20px 0; max-height: 65vh; overflow-y: auto;}
 
-/* PAGE */
-.page {
-  display: none;
-  padding: 40px;
-  text-align: center;
-}
+        /* MODALS */
+        .modal{position:fixed; top:0; left:0; width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center; z-index: 1001; backdrop-filter: blur(8px);}
+        .modal-box{background:#fff;padding:40px;border-radius:30px;width:90%; max-width:500px; position: relative; animation: zoomIn 0.4s ease;}
 
-.page.active {
-  display: block;
-}
-
-/* PRODUCTS */
-.products {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.card {
-  background: white;
-  width: 220px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-.card img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-}
-
-.card button {
-  background: #00bfff;
-  border: none;
-  color: white;
-  padding: 10px;
-  width: 100%;
-  cursor: pointer;
-}
-
-/* CART BOX */
-.cart-box {
-  position: fixed;
-  right: 10px;
-  top: 80px;
-  width: 320px;
-  background: white;
-  padding: 10px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-  display: none;
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-.cart-title {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.cart-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #f9f9f9;
-  margin-bottom: 10px;
-  padding: 8px;
-  border-radius: 8px;
-}
-
-.cart-item img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.cart-item h4 {
-  margin: 0;
-  font-size: 14px;
-}
-
-</style>
+        /* FOOTER */
+        .footer{background:#000;color:#fff;padding:80px 40px 30px 40px;}
+        .footer-grid{display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px;}
+        .footer-section h3 { margin-bottom: 20px; color: #0072ff; text-transform: uppercase; letter-spacing: 1px;}
+        .footer-section p, .footer-section li { color: #888; font-size: 15px; line-height: 2; list-style: none; }
+        
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:15px 30px;border-radius:50px;display:none; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: fadeInUp 0.4s;}
+    </style>
 </head>
-
 <body>
 
-<header>
-
-  <div class="logo">
-    <img src="https://sp-ao.shortpixel.ai/client/to_webp,q_glossy,ret_img,w_750,h_400/http://assets.designhill.com/design-blog/wp-content/uploads/2019/04/19.png">
-  </div>
-
-  <div class="nav-buttons">
-    <button onclick="showPage('home')">Home</button>
-    <button onclick="showPage('men')">Men</button>
-    <button onclick="showPage('women')">Women</button>
-    <button onclick="showPage('kids')">Kids</button>
-    <button onclick="showPage('sale')">Sale</button>
-    <button onclick="showPage('contact')">Contact</button>
-  </div>
-
-  <div class="search-box">
-    <input id="searchInput" type="text" placeholder="Search...">
-    <button onclick="searchProduct()">Search</button>
-  </div>
-
-  <button class="cart-btn" onclick="toggleCart()">
-    🛒 Cart (<span id="cartCount">0</span>)
-  </button>
-
-</header>
-
-<!-- CART BOX -->
-<div class="cart-box" id="cartBox">
-  <div class="cart-title">Your Cart</div>
-  <div id="cartItems"></div>
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay">
+    <div class="login-box animate__animated animate__zoomIn">
+        <b style="font-size: 32px; color: #0072ff;">Fashion<span style="color:#000">Hub</span></b>
+        <p style="margin-bottom: 25px; color: #666; font-weight: 300;">Premium Luxury Awaits</p>
+        <input type="text" id="username" placeholder="Full Name">
+        <input type="password" id="password" placeholder="Password">
+        <button class="login-btn" onclick="handleLogin()">Experience Now</button>
+        <p style="margin-top: 20px; font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Secure Guest Access</p>
+    </div>
 </div>
 
-<!-- HOME -->
-<div id="home" class="page active">
-  <h1>Home Collection</h1>
-  <div class="products">
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600">
-      <h3>T-Shirt</h3>
-      <button onclick="addCart('T-Shirt','https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600')">Add</button>
+<!-- MAIN CONTENT -->
+<div id="mainContent">
+    <div class="main-header">
+        <b style="font-size:26px; cursor: pointer; letter-spacing: -1px;" onclick="showPage('home')">Fashion<span style="color:#0072ff">Hub</span></b>
+        <div class="menu">
+            <a onclick="showPage('home')">Home</a>
+            <a onclick="showPage('men')">Men</a>
+            <a onclick="showPage('women')">Women</a>
+            <a onclick="showPage('kids')">Kids</a>
+            <a onclick="openPolicyModal()">Store Info</a>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="header-btn" onclick="toggleCart()" style="background: transparent; color: #000; border: 1px solid #ddd;">🛒 <span id="cartCount">0</span></button>
+            <button class="header-btn" onclick="openModal()">＋ New Style</button>
+        </div>
     </div>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600">
-      <h3>Shoes</h3>
-      <button onclick="addCart('Shoes','https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600')">Add</button>
+    <!-- VIDEO HERO SECTION -->
+    <div class="hero" id="heroSection">
+        <div class="hero-overlay"></div>
+        <!-- High-quality fashion video background -->
+        <video class="video-bg" autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-fashion-model-walking-down-the-street-33458-large.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content">
+            <h1 class="animate__animated animate__fadeInLeft">The Future <br><span style="color: #0072ff;">Of Fashion</span></h1>
+            <p class="animate__animated animate__fadeInLeft animate__delay-1s">Curated premium styles for the modern individual.</p>
+            <button class="header-btn" style="padding: 15px 40px; font-size: 18px;" onclick="showPage('men')">Explore Collection</button>
+        </div>
     </div>
 
-  </div>
-</div>
+    <div id="pagesContainer"></div>
 
-<!-- MEN -->
-<div id="men" class="page">
-  <h1>Men Collection</h1>
-  <div class="products">
+    <!-- MAP SECTION -->
+    <section class="map-section reveal">
+        <h2 style="font-size: 36px; font-weight: 700;">Our Flagship Store</h2>
+        <p style="color:#666; margin-bottom: 20px;">Experience luxury in person. Open daily 10 AM - 9 PM.</p>
+        <div class="map-container">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.019112461279!2d-122.41941548468205!3d37.77492957975947!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085809c6c8f445b%3A0x7f554393663673f4!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1645564857412!5m2!1sen!2sus" 
+                width="100%" height="100%" style="border:0; filter: grayscale(100%) invert(90%);" allowfullscreen="" loading="lazy">
+            </iframe>
+        </div>
+    </section>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?w=600">
-      <h3>Men Shirt</h3>
-      <button onclick="addCart('Men Shirt','https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?w=600')">Add</button>
+    <!-- NEWSLETTER -->
+    <section class="newsletter reveal">
+        <h2>Join the Elite</h2>
+        <p>Subscribe for early access to limited drops and exclusive invitations.</p>
+        <div style="margin-top: 35px;">
+            <input type="email" placeholder="Your Email Address">
+            <button onclick="showToast('Welcome to the Hub! 📧')">Subscribe</button>
+        </div>
+    </section>
+
+    <div class="cart-panel" id="cartPanel">
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-weight: 700;">My Cart</h2>
+            <button onclick="toggleCart()" style="border:none; background:none; cursor:pointer; font-size:30px">&times;</button>
+        </div>
+        <div id="cartItems"></div>
+        <hr style="opacity: 0.1;">
+        <div style="margin: 30px 0;">
+            <p style="color: #888;">Order Total</p>
+            <h2 style="font-size: 32px;">₹<span id="total">0</span></h2>
+        </div>
+        <button class="add-cart" style="margin-bottom: 10px;" onclick="clearCart()">Clear Cart</button>
+        <button class="add-cart" style="background:#0072ff;" onclick="showToast('Checkout processing...')">Secure Checkout</button>
     </div>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1520975922284-9c0b1d2d5a2c?w=600">
-      <h3>Jeans</h3>
-      <button onclick="addCart('Jeans','https://images.unsplash.com/photo-1520975922284-9c0b1d2d5a2c?w=600')">Add</button>
+    <!-- MODALS -->
+    <div class="modal" id="productModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom: 20px;">Add New Style</h2>
+            <input id="pname" style="width:100%;padding:12px;margin:10px 0; border: 1px solid #ddd; border-radius: 10px;" placeholder="Product Name">
+            <input id="pprice" type="number" style="width:100%;padding:12px;margin:10px 0; border: 1px solid #ddd; border-radius: 10px;" placeholder="Price (₹)">
+            <input id="pimg" style="width:100%;padding:12px;margin:10px 0; border: 1px solid #ddd; border-radius: 10px;" placeholder="Image URL (Unsplash/Imgur)">
+            <select id="pcat" style="width:100%;padding:12px;margin:10px 0; border: 1px solid #ddd; border-radius: 10px;">
+                <option value="home">Home Arrivals</option>
+                <option value="men">Men's Department</option>
+                <option value="women">Women's Department</option>
+                <option value="kids">Kids' Department</option>
+            </select>
+            <button class="header-btn" style="width:100%; margin-top:15px; padding: 15px;" onclick="addProduct()">Save Product</button>
+            <p style="text-align: center; margin-top: 15px; cursor: pointer; color: #888;" onclick="closeModal('productModal')">Cancel</p>
+        </div>
     </div>
 
-  </div>
-</div>
-
-<!-- WOMEN -->
-<div id="women" class="page">
-  <h1>Women Collection</h1>
-  <div class="products">
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600">
-      <h3>Dress</h3>
-      <button onclick="addCart('Dress','https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600')">Add</button>
+    <!-- POLICY MODAL -->
+    <div class="modal" id="policyModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom: 20px; color: #0072ff;">Store Policies</h2>
+            <div style="text-align: left; font-size: 14px; line-height: 1.8; color: #444;">
+                <p><strong>📦 Fast Shipping:</strong> Free delivery on orders above ₹2,000.</p>
+                <p><strong>🔄 Easy Returns:</strong> 30-day exchange policy for all unworn items.</p>
+                <p><strong>🛡️ Secure Payments:</strong> SSL encrypted transactions via all major cards.</p>
+            </div>
+            <button class="header-btn" style="width:100%; margin-top:25px" onclick="closeModal('policyModal')">Got it</button>
+        </div>
     </div>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600">
-      <h3>Handbag</h3>
-      <button onclick="addCart('Handbag','https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600')">Add</button>
-    </div>
+    <div class="toast" id="toast"></div>
 
-  </div>
-</div>
-
-<!-- KIDS -->
-<div id="kids" class="page">
-  <h1>Kids Collection</h1>
-  <div class="products">
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600">
-      <h3>Kids T-Shirt</h3>
-      <button onclick="addCart('Kids T-Shirt','https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600')">Add</button>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?w=600">
-      <h3>Kids Shoes</h3>
-      <button onclick="addCart('Kids Shoes','https://images.unsplash.com/photo-1520975916090-3105956dac38?w=600')">Add</button>
-    </div>
-
-  </div>
-</div>
-
-<!-- SALE -->
-<div id="sale" class="page">
-  <h1>🔥 Sale Offers</h1>
-  <div class="products">
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600">
-      <h3>Jacket - 50% OFF</h3>
-      <button onclick="addCart('Jacket','https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600')">Add</button>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600">
-      <h3>Watch - Discount</h3>
-      <button onclick="addCart('Watch','https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600')">Add</button>
-    </div>
-
-  </div>
-</div>
-
-<!-- CONTACT -->
-<div id="contact" class="page">
-  <h1>Contact Us</h1>
-  <input placeholder="Name"><br><br>
-  <input placeholder="Email"><br><br>
-  <textarea placeholder="Message"></textarea><br><br>
-  <button>Send</button>
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <b style="font-size: 24px; color: #fff;">FashionHub</b>
+                <p style="margin-top: 15px;">Setting the standard for modern luxury since 2024. Quality you can feel.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Explore</h3>
+                <ul>
+                    <li onclick="showPage('men')" style="cursor:pointer">Men's Wear</li>
+                    <li onclick="showPage('women')" style="cursor:pointer">Women's Wear</li>
+                    <li>Limited Editions</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> help@fashionhub.com</li>
+                    <li><i class="fas fa-phone"></i> +1 (800) HUB-STYLE</li>
+                </ul>
+            </div>
+        </div>
+        <div style="text-align: center; border-top: 1px solid #222; padding-top: 30px; color: #444; font-size: 13px;">
+            &copy; 2026 FashionHub Global Inc. | Designed for Excellence.
+        </div>
+    </footer>
 </div>
 
 <script>
+    // --- LOGIN LOGIC ---
+    function handleLogin() {
+        const user = document.getElementById("username").value;
+        const pass = document.getElementById("password").value;
+        if(user && pass) {
+            document.getElementById("loginOverlay").classList.add("animate__animated", "animate__fadeOutUp");
+            setTimeout(() => {
+                document.getElementById("loginOverlay").style.display = "none";
+                document.getElementById("mainContent").style.display = "block";
+                document.getElementById("mainContent").classList.add("animate__animated", "animate__fadeIn");
+                showToast("Welcome to the Hub, " + user + "!");
+                window.scrollTo(0,0);
+                reveal(); // Initialize scroll reveals
+            }, 600);
+        } else {
+            alert("Please enter credentials");
+        }
+    }
 
-let cart = [];
+    // --- SCROLL REVEAL LOGIC ---
+    function reveal() {
+        var reveals = document.querySelectorAll(".reveal");
+        for (var i = 0; i < reveals.length; i++) {
+            var windowHeight = window.innerHeight;
+            var elementTop = reveals[i].getBoundingClientRect().top;
+            var elementVisible = 150;
+            if (elementTop < windowHeight - elementVisible) {
+                reveals[i].classList.add("active");
+            }
+        }
+    }
+    window.addEventListener("scroll", reveal);
 
-/* PAGE SWITCH */
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+    const pagesContainer = document.getElementById("pagesContainer");
+    const cartItems = document.getElementById("cartItems");
+    const cartCount = document.getElementById("cartCount");
+    const toast = document.getElementById("toast");
+    const heroSection = document.getElementById("heroSection");
 
-/* CART */
-function addCart(name,img){
-  cart.push({name,img});
-  updateCart();
-}
+    let currentPage = "home";
 
-function updateCart(){
-  document.getElementById("cartCount").innerText = cart.length;
+    // --- DATA ---
+    let products = JSON.parse(localStorage.getItem("products")) || {
+        home: [
+            ["Onyx Sneakers", "4999", "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800"],
+            ["Midnight Watch", "12499", "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800"]
+        ],
+        men: [["Signature Hoodie", "3299", "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800"]],
+        women: [["Silk Evening Dress", "8999", "https://images.unsplash.com/photo-1539109132381-3151b8a77f06?w=800"]],
+        kids: [["Urban Denim", "1499", "https://images.unsplash.com/photo-1519234221762-f9e47aa3d584?w=800"]]
+    };
 
-  let box = document.getElementById("cartItems");
-  box.innerHTML = "";
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  cart.forEach(item=>{
-    box.innerHTML += `
-      <div class="cart-item">
-        <img src="${item.img}">
-        <h4>${item.name}</h4>
-      </div>
-    `;
-  });
-}
+    function saveProducts() { localStorage.setItem("products", JSON.stringify(products)); }
 
-function toggleCart(){
-  let box = document.getElementById("cartBox");
-  box.style.display = (box.style.display==="block") ? "none" : "block";
-}
+    function buildPages() {
+        pagesContainer.innerHTML = "";
+        for (const section in products) {
+            let page = document.createElement("div");
+            page.className = "page";
+            page.id = `page-${section}`;
+            let html = `<h1 style="padding:60px 40px 20px 40px; font-size: 42px; text-transform: uppercase; letter-spacing: -1px;">${section} <span style="color:#0072ff">Collection</span></h1><div class="products">`;
+            products[section].forEach((p, i) => {
+                html += `
+                <div class="card animate__animated animate__fadeInUp">
+                    <button class="delete-cross" onclick="deleteProduct('${section}', ${i})">&times;</button>
+                    <img src="${p[2]}">
+                    <div class="card-content">
+                        <h3 style="font-weight: 600;">${p[0]}</h3>
+                        <div class="price">₹${p[1]}</div>
+                        <button class="add-cart" onclick="addToCart('${section}', ${i})">Add to Cart</button>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            page.innerHTML = html;
+            pagesContainer.appendChild(page);
+        }
+        showPage(currentPage);
+    }
 
-/* SEARCH */
-function searchProduct(){
-  let value = document.getElementById("searchInput").value.toLowerCase();
-  document.querySelectorAll(".card").forEach(card=>{
-    let title = card.querySelector("h3").innerText.toLowerCase();
-    card.style.display = title.includes(value) ? "block" : "none";
-  });
-}
+    function showPage(id) {
+        currentPage = id;
+        heroSection.style.display = (id === 'home') ? "block" : "none";
+        document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+        const activePage = document.getElementById(`page-${id}`);
+        if(activePage) activePage.style.display = "block";
+        window.scrollTo(0,0);
+    }
 
+    function openModal() { document.getElementById("productModal").style.display = "flex"; }
+    function openPolicyModal() { document.getElementById("policyModal").style.display = "flex"; }
+    function closeModal(mId) { document.getElementById(mId).style.display = "none"; }
+
+    function addProduct() {
+        const name = document.getElementById("pname").value.trim();
+        const price = document.getElementById("pprice").value.trim();
+        const img = document.getElementById("pimg").value.trim() || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800";
+        const cat = document.getElementById("pcat").value;
+        if (!name || !price) { alert("Please enter name and price"); return; }
+        products[cat].push([name, price, img]);
+        saveProducts();
+        buildPages();
+        closeModal('productModal');
+        showToast("Product Added Successfully!");
+    }
+
+    function deleteProduct(cat, i) {
+        if(confirm("Remove this item from the store?")) {
+            products[cat].splice(i, 1);
+            saveProducts();
+            buildPages();
+        }
+    }
+
+    function addToCart(cat, i) {
+        const item = products[cat][i];
+        cart.push({name: item[0], price: item[1]});
+        updateCart();
+        showToast("✓ " + item[0] + " added to cart");
+    }
+
+    function updateCart() {
+        cartCount.innerText = cart.length;
+        cartItems.innerHTML = "";
+        let total = 0;
+        cart.forEach((item) => {
+            cartItems.innerHTML += `
+            <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom: 1px solid #eee;">
+                <span style="font-weight:600">${item.name}</span>
+                <span style="color:#0072ff; font-weight:700">₹${item.price}</span>
+            </div>`;
+            total += Number(item.price);
+        });
+        document.getElementById("total").innerText = total.toLocaleString();
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function clearCart() { cart = []; updateCart(); showToast("Cart Cleared"); }
+    function toggleCart() { document.getElementById("cartPanel").classList.toggle("cart-open"); }
+    
+    function showToast(msg) {
+        toast.innerText = msg;
+        toast.style.display = "block";
+        setTimeout(() => toast.style.display = "none", 2500);
+    }
+
+    buildPages();
+    updateCart();
 </script>
 
 </body>
